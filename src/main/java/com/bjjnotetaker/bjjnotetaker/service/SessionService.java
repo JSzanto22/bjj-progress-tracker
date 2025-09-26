@@ -1,0 +1,51 @@
+package com.bjjnotetaker.bjjnotetaker.service;
+
+import com.bjjnotetaker.bjjnotetaker.domain.Session;
+import com.bjjnotetaker.bjjnotetaker.domain.User;
+import com.bjjnotetaker.bjjnotetaker.repository.SessionRepository;
+import com.bjjnotetaker.bjjnotetaker.repository.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.sql.Date;
+import java.util.List;
+import java.util.Optional;
+
+@Service
+public class SessionService {
+
+  private final SessionRepository sessionRepository;
+  private final UserService userService;
+
+  public SessionService(SessionRepository sessionRepository, UserService userService) {
+    this.sessionRepository = sessionRepository;
+    this.userService = userService;
+  }
+
+  public Session createSessionForUser(String username, Session sessionData) {
+    User user = userService.getUserByUsername(username);
+    sessionData.setUser(user);
+    return sessionRepository.save(sessionData);
+  }
+
+  public void deleteSessionForUser(Session sessionData, String username) {
+    sessionData.setUser(userService.getUserByUsername(username));
+    sessionRepository.delete(sessionData);
+  }
+
+  public void updateSessionForUser(String username, Session sessionData) {
+    User user = userService.getUserByUsername(username);
+    sessionData.setUser(user);
+    sessionRepository.save(sessionData);
+  }
+
+  public List<Session> getAllSessionsForUser(String username) {
+    User user = userService.getUserByUsername(username);
+    return sessionRepository.findAllByUser_id(user.getId());
+  }
+
+//  public List<Session> getSessionsForUserOnDate(String username, Date startDate, Date endDate) {
+//    User user = userService.getUserByUsername(username);
+//    return sessionRepository.getSessionsByClassDateBetween(user, startDate, endDate);
+//  }
+}
