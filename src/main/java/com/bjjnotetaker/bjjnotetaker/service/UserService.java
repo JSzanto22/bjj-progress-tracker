@@ -22,7 +22,7 @@ public class UserService {
 
   public User getUserByUsername(String username){
     User user = userRepository.findByUsername(username);
-//    if(user == null){throw new EntityNotFoundException("User not found with username: " + username);}
+    if(user == null){throw new EntityNotFoundException("User not found with username: " + username);}
 
     return user;
   }

@@ -3,13 +3,10 @@ package com.bjjnotetaker.bjjnotetaker.service;
 import com.bjjnotetaker.bjjnotetaker.domain.Session;
 import com.bjjnotetaker.bjjnotetaker.domain.User;
 import com.bjjnotetaker.bjjnotetaker.repository.SessionRepository;
-import com.bjjnotetaker.bjjnotetaker.repository.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.sql.Date;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class SessionService {
@@ -44,8 +41,8 @@ public class SessionService {
     return sessionRepository.findAllByUser_id(user.getId());
   }
 
-//  public List<Session> getSessionsForUserOnDate(String username, Date startDate, Date endDate) {
-//    User user = userService.getUserByUsername(username);
-//    return sessionRepository.getSessionsByClassDateBetween(user, startDate, endDate);
-//  }
+  public List<Session> getSessionsForUserBetweenDates(String username, Date startDate, Date endDate) {
+    User user = userService.getUserByUsername(username);
+    return sessionRepository.getSessionsByClassDateBetween(user, startDate, endDate);
+  }
 }

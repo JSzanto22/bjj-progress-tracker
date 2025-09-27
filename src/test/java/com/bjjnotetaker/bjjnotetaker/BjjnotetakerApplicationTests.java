@@ -4,16 +4,14 @@ import com.bjjnotetaker.bjjnotetaker.domain.Session;
 import com.bjjnotetaker.bjjnotetaker.domain.User;
 import com.bjjnotetaker.bjjnotetaker.service.SessionService;
 import com.bjjnotetaker.bjjnotetaker.service.UserService;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.sql.Date;
-import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 
 
@@ -62,7 +60,7 @@ class BjjnotetakerApplicationTests {
     assertNotNull(userService.getUserByUsername("JUNITuser")); //check if user was registered
 
     userService.deleteUser(user);
-    assertNull(userService.getUserByUsername("JUNITuser")); //check if user was removed
+    assertThrows(EntityNotFoundException.class, () -> userService.getUserByUsername("JUNITuser")); //check if user was removed
   }
 
   @Test
@@ -82,7 +80,8 @@ class BjjnotetakerApplicationTests {
     assertEquals("NotJunitUser", userService.getUserByUsername("NotJunitUser").getUsername());
     assertEquals("red", userService.getUserByUsername("NotJunitUser").getBeltRank());
     assertEquals("DifferentEmail@email.com", userService.getUserByUsername("NotJunitUser").getEmail());
-    assertNull(userService.getUserByUsername("JUNITuser")); //Check that old registration is gone
+
+    assertThrows(EntityNotFoundException.class, () -> userService.getUserByUsername("JUNITuser")); //Check that old registration is gone
   }
 
   @Test
@@ -178,46 +177,46 @@ class BjjnotetakerApplicationTests {
 //    System.out.println("Post-update: " + newSessions.get(0));
   }
 
-//  @Test
-//  void testThatGetAllSessionsBetweenDatesWorks() {
-//    User user = User.builder()
-//      .username("JUNITuser")
-//      .email("Junitemail@email.com")
-//      .beltRank("blue")
-//      .stripeCount(0)
-//      .build();
-//    userService.registerUser(user);
-//
-//    Session session1 = Session.builder()
-//      .classDate(new Date(Date.valueOf("2025-09-23").getTime()))
-//      .classType("GI")
-//      .duration(233)
-//      .notes("Worked on leglocks")
-//      .build();
-//    sessionService.createSessionForUser("JUNITuser", session1);
-//
-//    Session session2 = Session.builder()
-//      .classDate(new Date(Date.valueOf("2025-11-23").getTime()))
-//      .classType("GI")
-//      .duration(233)
-//      .notes("Worked on leglocks")
-//      .build();
-//    sessionService.createSessionForUser("JUNITuser", session2);
-//
-//    Session session3 = Session.builder()
-//      .classDate(new Date(Date.valueOf("2024-08-23").getTime()))
-//      .classType("GI")
-//      .duration(233)
-//      .notes("Worked on leglocks")
-//      .build();
-//    sessionService.createSessionForUser("JUNITuser", session3);
-//
-//    Date date1 = new Date(Date.valueOf("2025-09-23").getTime());
-//    Date date2 = new Date(Date.valueOf("2025-11-23").getTime());
-//
-//    List<Session> sesions = sessionService.getSessionsForUserOnDate("JUNITuser",date1 ,date2);
-//
-//    assert(sesions.size() == 2);
-//  }
+  @Test
+  void testThatGetAllSessionsBetweenDatesWorks() {
+    User user = User.builder()
+      .username("JUNITuser")
+      .email("Junitemail@email.com")
+      .beltRank("blue")
+      .stripeCount(0)
+      .build();
+    userService.registerUser(user);
+
+    Session session1 = Session.builder()
+      .classDate(new Date(Date.valueOf("2025-09-23").getTime()))
+      .classType("GI")
+      .duration(233)
+      .notes("Worked on leglocks")
+      .build();
+    sessionService.createSessionForUser("JUNITuser", session1);
+
+    Session session2 = Session.builder()
+      .classDate(new Date(Date.valueOf("2025-11-23").getTime()))
+      .classType("GI")
+      .duration(233)
+      .notes("Worked on leglocks")
+      .build();
+    sessionService.createSessionForUser("JUNITuser", session2);
+
+    Session session3 = Session.builder()
+      .classDate(new Date(Date.valueOf("2024-08-23").getTime()))
+      .classType("GI")
+      .duration(233)
+      .notes("Worked on leglocks")
+      .build();
+    sessionService.createSessionForUser("JUNITuser", session3);
+
+    Date date1 = new Date(Date.valueOf("2024-09-23").getTime());
+    Date date2 = new Date(Date.valueOf("2025-11-23").getTime());
+
+    List<Session> sesions = sessionService.getSessionsForUserBetweenDates("JUNITuser", date1, date2);
+
+    assert(sesions.size() == 2);
+  }
 
 }
