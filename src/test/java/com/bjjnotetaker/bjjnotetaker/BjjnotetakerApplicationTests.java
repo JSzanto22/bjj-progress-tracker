@@ -2,6 +2,8 @@ package com.bjjnotetaker.bjjnotetaker;
 
 import com.bjjnotetaker.bjjnotetaker.domain.Session;
 import com.bjjnotetaker.bjjnotetaker.domain.User;
+import com.bjjnotetaker.bjjnotetaker.service.AuthService;
+import com.bjjnotetaker.bjjnotetaker.service.PasswordHashingService;
 import com.bjjnotetaker.bjjnotetaker.service.SessionService;
 import com.bjjnotetaker.bjjnotetaker.service.UserService;
 import jakarta.persistence.EntityNotFoundException;
@@ -25,9 +27,14 @@ class BjjnotetakerApplicationTests {
   @Autowired
   private UserService userService;
 
+  @Autowired
+  PasswordHashingService passwordHashingService;
+
+  @Autowired
+  private AuthService authService;
 
 
-	@Test
+  @Test
 	void contextLoads() {
 	}
 
@@ -38,6 +45,7 @@ class BjjnotetakerApplicationTests {
       .email("Junitemail@email.com")
       .beltRank("blue")
       .stripeCount(0)
+      .passwordHash(passwordHashingService.hashPassword("Password123"))
       .build();
 
     userService.registerUser(user);
@@ -54,6 +62,7 @@ class BjjnotetakerApplicationTests {
       .email("Junitemail@email.com")
       .beltRank("blue")
       .stripeCount(0)
+      .passwordHash(passwordHashingService.hashPassword("Password123"))
       .build();
 
     userService.registerUser(user);
@@ -70,6 +79,7 @@ class BjjnotetakerApplicationTests {
       .email("Junitemail@email.com")
       .beltRank("blue")
       .stripeCount(0)
+      .passwordHash(passwordHashingService.hashPassword("Password123"))
       .build();
 
     userService.registerUser(user);
@@ -91,6 +101,7 @@ class BjjnotetakerApplicationTests {
       .email("Junitemail@email.com")
       .beltRank("blue")
       .stripeCount(0)
+      .passwordHash(passwordHashingService.hashPassword("Password123"))
       .build();
     userService.registerUser(user);
 
@@ -121,6 +132,7 @@ class BjjnotetakerApplicationTests {
       .email("Junitemail@email.com")
       .beltRank("blue")
       .stripeCount(0)
+      .passwordHash(passwordHashingService.hashPassword("Password123"))
       .build();
     userService.registerUser(user);
 
@@ -150,6 +162,7 @@ class BjjnotetakerApplicationTests {
       .email("Junitemail@email.com")
       .beltRank("blue")
       .stripeCount(0)
+      .passwordHash(passwordHashingService.hashPassword("Password123"))
       .build();
     userService.registerUser(user);
 
@@ -184,6 +197,7 @@ class BjjnotetakerApplicationTests {
       .email("Junitemail@email.com")
       .beltRank("blue")
       .stripeCount(0)
+      .passwordHash(passwordHashingService.hashPassword("Password123"))
       .build();
     userService.registerUser(user);
 
@@ -214,9 +228,52 @@ class BjjnotetakerApplicationTests {
     Date date1 = new Date(Date.valueOf("2024-09-23").getTime());
     Date date2 = new Date(Date.valueOf("2025-11-23").getTime());
 
-    List<Session> sesions = sessionService.getSessionsForUserBetweenDates("JUNITuser", date1, date2);
+    List<Session> sessions = sessionService.getSessionsForUserBetweenDates("JUNITuser", date1, date2);
 
-    assert(sesions.size() == 2);
+    assert(sessions.size() == 2);
+  }
+
+  @Test
+  void testThatPasswordHashWorks() {
+
+    String password = "password";
+
+    String hashedPassword = passwordHashingService.hashPassword(password);
+
+    System.out.println(hashedPassword);
+    assert(!hashedPassword.equals(password));
+
+  }
+
+  @Test
+  void testThatPasswordMatchesWorks() {
+    PasswordHashingService passwordHashingService = new PasswordHashingService();
+
+    String password = "password";
+    String hashedPassword = passwordHashingService.hashPassword(password);
+
+    assertNotEquals(password, hashedPassword);
+    assert(passwordHashingService.passwordsMatch(password, hashedPassword));
+  }
+
+  @Test
+  void testAuthServiceWorks() {
+    User user = User.builder()
+      .username("JUNITuser")
+      .email("Junitemail@email.com")
+      .beltRank("blue")
+      .stripeCount(0)
+      .passwordHash(passwordHashingService.hashPassword("Password123"))
+      .build();
+    userService.registerUser(user);
+
+    User registeredUser = userService.getUserByUsername("JUNITuser");
+    String token = authService.generateToken(registeredUser.getId(), registeredUser.getUsername());
+
+    assertTrue(authService.validateToken(token));
+    assertEquals(registeredUser.getUsername(), authService.getUsernameFromToken(token));
+    assertEquals(registeredUser.getId(), authService.getUserIdFromToken(token));
+  //  System.out.println(token);
   }
 
 }

@@ -9,6 +9,7 @@ email VARCHAR(255) UNIQUE,
 belt_rank VARCHAR(7) DEFAULT 'N/A',
 stripe_count INTEGER DEFAULT 0,
 join_date DATE DEFAULT NOW(),
+password_hash VARCHAR(255) NOT NULL,
 CHECK (stripe_count <= 4 AND stripe_count >= 0)
 );
 

@@ -1,11 +1,11 @@
 -- Insert users
-INSERT INTO users (username, email, belt_rank, stripe_count, join_date)
+INSERT INTO users (username, email, belt_rank, stripe_count, join_date, password_hash)
 VALUES
-    ('Joseph', 'jdoe@example.com', 'White', 2, '2025-01-15'),
-    ('asmith', 'asmith@example.com', 'Blue', 1, '2024-11-10'),
-    ('mkim', 'mkim@example.com', 'Purple', 0, '2023-09-05'),
-    ('rlin', 'rlin@example.com', 'Brown', 3, '2022-05-20'),
-    ('tnguyen', 'tnguyen@example.com', 'Black', 4, '2020-02-12');
+    ('Joseph', 'jdoe@example.com', 'White', 2, '2025-01-15','NotAPasswordHash'),
+    ('asmith', 'asmith@example.com', 'Blue', 1, '2024-11-10','NotAPasswordHash'),
+    ('mkim', 'mkim@example.com', 'Purple', 0, '2023-09-05','NotAPasswordHash'),
+    ('rlin', 'rlin@example.com', 'Brown', 3, '2022-05-20','NotAPasswordHash'),
+    ('tnguyen', 'tnguyen@example.com', 'Black', 4, '2020-02-12','NotAPasswordHash');
 
 -- Insert sessions
 INSERT INTO sessions (user_id, class_date, class_type, duration, notes)

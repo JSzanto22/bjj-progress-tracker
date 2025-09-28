@@ -31,6 +31,9 @@ public class User {
   @Column(name = "join_date")
   private Date joinDate;
 
+  @Column(name = "password_hash")
+  private String passwordHash;
+
   @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
   @JsonManagedReference
   private List<Session> sessions = new ArrayList<>();
