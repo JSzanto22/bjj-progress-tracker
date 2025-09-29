@@ -6,8 +6,8 @@ import lombok.Value;
 
 @Data
 public class LoginRequestDTO {
-  @NotBlank
+  @NotBlank(message = "Username cannot be empty!")
   private String username;
-  @NotBlank
+  @NotBlank(message = "Password cannot be empty!")
   private String plaintextPassword;
 }
