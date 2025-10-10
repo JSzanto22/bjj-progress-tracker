@@ -10,6 +10,8 @@ import com.bjjnotetaker.bjjnotetaker.service.AuthService;
 import com.bjjnotetaker.bjjnotetaker.service.UserService;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -29,26 +31,29 @@ public class AuthController {
   UserMapper userMapper;
 
   @PostMapping("/login")
-  public LoginResponseDTO login(@RequestBody LoginRequestDTO request){
+  public ResponseEntity<LoginResponseDTO> login(@RequestBody LoginRequestDTO request){
     User user = authService.authenticate(request.getUsername(),request.getPlaintextPassword());
 
     String jwt = authService.generateToken(user.getId(),user.getUsername());
 
-    return new LoginResponseDTO(user.getId(), user.getUsername(), jwt);
+    return ResponseEntity.ok(new LoginResponseDTO(user.getId(), user.getUsername(), jwt));
   }
 
   @PostMapping("/register")
-  public UserResponseDTO register(@RequestBody UserRegisterDTO request){
+  public ResponseEntity<UserResponseDTO> register(@RequestBody UserRegisterDTO request){
     User user = userMapper.mapUser(request);
 
     try{
       userService.getUserByUsername(user.getUsername());
     } catch (EntityNotFoundException e) {
       userService.registerUser(user);
-      return userMapper.mapUser(user);
+      UserResponseDTO userResponseDTO = userMapper.mapUser(user);
+      return ResponseEntity
+        .status(HttpStatus.CREATED)
+        .body(userResponseDTO);
     }
 
-    throw new RuntimeException("Username already exists!");
+    return ResponseEntity.status(HttpStatus.CONFLICT).build();
 
   }
 }

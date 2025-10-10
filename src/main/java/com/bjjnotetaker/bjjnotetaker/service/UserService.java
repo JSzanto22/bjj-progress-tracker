@@ -28,6 +28,7 @@ public class UserService {
   }
 
   public User updateUser(User user){
+    //TO-DO: pull the original entity from the DB and alter the non-null values of the new user and then save.
     return userRepository.save(user);
   }
 }

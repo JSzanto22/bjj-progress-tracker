@@ -5,6 +5,7 @@ import com.bjjnotetaker.bjjnotetaker.domain.User;
 import com.bjjnotetaker.bjjnotetaker.dto.sessionManagement.SessionDTO;
 import com.bjjnotetaker.bjjnotetaker.dto.userManagement.UserRegisterDTO;
 import com.bjjnotetaker.bjjnotetaker.dto.userManagement.UserResponseDTO;
+import com.bjjnotetaker.bjjnotetaker.dto.userManagement.UserUpdateDTO;
 import com.bjjnotetaker.bjjnotetaker.service.AuthService;
 import com.bjjnotetaker.bjjnotetaker.service.PasswordHashingService;
 import com.bjjnotetaker.bjjnotetaker.service.SessionService;
@@ -52,5 +53,17 @@ public class UserMapper {
       .build();
     return userResponseDTO;
   }
+
+  public User mapUser(UserUpdateDTO userUpdateDTO) {
+    User user = User.builder()
+      .email(userUpdateDTO.getEmail())
+      .username(userUpdateDTO.getUsername())
+      .beltRank(userUpdateDTO.getBeltRank())
+      .stripeCount(userUpdateDTO.getStripeCount())
+      .build();
+
+      return user;
+  }
+
 
 }
