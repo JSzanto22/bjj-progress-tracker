@@ -3,6 +3,7 @@ package com.bjjnotetaker.bjjnotetaker.service;
 import com.bjjnotetaker.bjjnotetaker.domain.Session;
 import com.bjjnotetaker.bjjnotetaker.domain.User;
 import com.bjjnotetaker.bjjnotetaker.repository.SessionRepository;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.sql.Date;
@@ -45,4 +46,14 @@ public class SessionService {
     User user = userService.getUserByUsername(username);
     return sessionRepository.getSessionsByClassDateBetween(user, startDate, endDate);
   }
+
+  public void deleteSessionsForUser(String username, List<Long> sessionIds) {
+    User user = userService.getUserByUsername(username);
+    sessionRepository.deleteSessionByIdInAndUserId(sessionIds, user.getId());
+  }
+
+  public Session getSessionsForUserAndId(Long sessionId, Long userId) {
+    return sessionRepository.getSessionByIdAndUserId(sessionId, userId);
+  }
+
 }

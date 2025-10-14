@@ -19,5 +19,10 @@ public interface SessionRepository extends JpaRepository<Session, Long> {
   List<Session> getSessionsByClassDateBetween(
     @Param("user") User user,
     @Param("classDateAfter") Date classDateAfter,
-    @Param("classDateBefore") Date classDateBefore);
+    @Param("classDateBefore") Date classDateBefore
+  );
+
+  void deleteSessionByIdInAndUserId(List<Long> sessionIds, Long userId);
+
+  Session getSessionByIdAndUserId(Long sessionId, Long userId);
 }

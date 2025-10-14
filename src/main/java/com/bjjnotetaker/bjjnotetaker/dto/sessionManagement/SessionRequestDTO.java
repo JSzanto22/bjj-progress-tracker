@@ -7,8 +7,11 @@ import java.sql.Date;
 
 @Data
 public class SessionRequestDTO  {
+  private long id;
   @NotEmpty
-  private Date classDate;
+  private Date fromClassDate;
+  //Null when requesting to create a new Session
+  private Date toClassDate;
   private String classType;
   private Integer duration;
   private String notes;

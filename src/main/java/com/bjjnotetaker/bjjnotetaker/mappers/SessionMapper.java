@@ -2,6 +2,7 @@ package com.bjjnotetaker.bjjnotetaker.mappers;
 
 import com.bjjnotetaker.bjjnotetaker.domain.Session;
 import com.bjjnotetaker.bjjnotetaker.dto.sessionManagement.SessionDTO;
+import com.bjjnotetaker.bjjnotetaker.dto.sessionManagement.SessionRequestDTO;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -28,6 +29,15 @@ public class SessionMapper {
       .classType(session.getClassType())
       .classDate(session.getClassDate())
       .duration(session.getDuration())
+      .build();
+  }
+
+  public Session mapSession(SessionRequestDTO sessionRequestDTO){
+    return Session.builder()
+      .notes(sessionRequestDTO.getNotes())
+      .classType(sessionRequestDTO.getClassType())
+      .classDate(sessionRequestDTO.getFromClassDate())
+      .duration(sessionRequestDTO.getDuration())
       .build();
   }
 
