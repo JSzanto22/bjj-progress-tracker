@@ -10,8 +10,15 @@ import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.MediaType;
+import org.springframework.test.web.servlet.MockMvc;
+
 import static org.junit.jupiter.api.Assertions.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.sql.Date;
 import java.util.List;
@@ -19,7 +26,11 @@ import java.util.List;
 
 @SpringBootTest
 @Transactional
+@AutoConfigureMockMvc
 class BjjnotetakerApplicationTests {
+
+  @Autowired
+  private MockMvc mockMvc;
 
   @Autowired
   private SessionService sessionService;
@@ -275,5 +286,17 @@ class BjjnotetakerApplicationTests {
     assertEquals(registeredUser.getId(), authService.getUserIdFromToken(token));
   //  System.out.println(token);
   }
+
+
+//@Test
+//  void testAuthControllerRegisterWorks() throws Exception {
+//    mockMvc.perform(post("/register")
+//      .contentType(MediaType.APPLICATION_JSON)
+//      .content("""
+//        {"username":"myUsername98", "email":"myEmail@gmail.com","password":"randomPassoword123","beltRank":"blue","stripeCount":0}
+//        """))
+//      .andExpect(status().isCreated());
+//}
+//TO-DO FIX THIS ABOVE
 
 }

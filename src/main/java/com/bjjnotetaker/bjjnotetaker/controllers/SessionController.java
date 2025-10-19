@@ -74,11 +74,10 @@ public class SessionController {
   public ResponseEntity<Void> updateSession(@AuthenticationPrincipal User principal, @RequestBody SessionRequestDTO sessionRequestDTO){
     Session sessionFromDB = sessionService.getSessionsForUserAndId(sessionRequestDTO.getId(), principal.getId());
 
-    sessionFromDB.builder()
-      .notes(sessionRequestDTO.getNotes())
-      .classType(sessionRequestDTO.getClassType())
-      .duration(sessionRequestDTO.getDuration())
-      .classDate(sessionRequestDTO.getFromClassDate()).build();
+    sessionFromDB.setNotes(sessionRequestDTO.getNotes());
+    sessionFromDB.setClassType(sessionRequestDTO.getClassType());
+    sessionFromDB.setClassDate(sessionRequestDTO.getFromClassDate());
+    sessionFromDB.setDuration(sessionRequestDTO.getDuration());
 
     sessionService.updateSessionForUser(principal.getUsername(), sessionFromDB);
 

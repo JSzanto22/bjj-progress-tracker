@@ -12,6 +12,7 @@ import com.bjjnotetaker.bjjnotetaker.service.SessionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Component
@@ -39,18 +40,20 @@ public class UserMapper {
   }
 
   public UserResponseDTO mapUser(final User user) {
-
-   List<SessionDTO> sessions = sessionMapper.mapSessions(user.getSessions());
+    List<SessionDTO> sessions = new ArrayList<>();
+    if(user.getStripeCount() != null && user.getStripeCount() > 0) {
+     sessions = sessionMapper.mapSessions(user.getSessions());
+    }
 
     final UserResponseDTO userResponseDTO = UserResponseDTO.builder()
       .id(user.getId())
       .username(user.getUsername())
       .beltRank(user.getBeltRank())
       .joinDate(user.getJoinDate())
-      .sessions(sessions)
       .attendance(user.getAttendanceCount())
       .jwt(authService.generateToken(user.getId(), user.getUsername()))
       .build();
+    userResponseDTO.setSessions(sessions);
     return userResponseDTO;
   }
 

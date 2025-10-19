@@ -16,6 +16,10 @@ public class UserService {
     return userRepository.save(user);
   }
 
+  public boolean doesEmailExist(String email){
+    return userRepository.existsByEmail(email);
+  }
+
   public void deleteUser(User user){
     userRepository.delete(user);
   }
