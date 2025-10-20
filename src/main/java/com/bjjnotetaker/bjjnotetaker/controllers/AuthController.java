@@ -1,6 +1,5 @@
 package com.bjjnotetaker.bjjnotetaker.controllers;
 
-import ch.qos.logback.core.LayoutBase;
 import com.bjjnotetaker.bjjnotetaker.domain.User;
 import com.bjjnotetaker.bjjnotetaker.dto.ErrorResponseDTO;
 import com.bjjnotetaker.bjjnotetaker.dto.authentication.LoginRequestDTO;
@@ -22,8 +21,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.sql.Timestamp;
 import java.time.Instant;
-import java.time.LocalDateTime;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -40,7 +37,7 @@ public class AuthController {
 
   @PostMapping("/login")
   public ResponseEntity<LoginResponseDTO> login(@RequestBody LoginRequestDTO request){
-    User user = authService.authenticate(request.getUsername(),request.getPlaintextPassword());
+    User user = authService.authenticate(request.getUsername(),request.getPassword());
 
     String jwt = authService.generateToken(user.getId(),user.getUsername());
 

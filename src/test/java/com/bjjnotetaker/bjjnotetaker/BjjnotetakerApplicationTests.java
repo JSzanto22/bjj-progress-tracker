@@ -2,10 +2,12 @@ package com.bjjnotetaker.bjjnotetaker;
 
 import com.bjjnotetaker.bjjnotetaker.domain.Session;
 import com.bjjnotetaker.bjjnotetaker.domain.User;
+import com.bjjnotetaker.bjjnotetaker.dto.authentication.LoginResponseDTO;
 import com.bjjnotetaker.bjjnotetaker.service.AuthService;
 import com.bjjnotetaker.bjjnotetaker.service.PasswordHashingService;
 import com.bjjnotetaker.bjjnotetaker.service.SessionService;
 import com.bjjnotetaker.bjjnotetaker.service.UserService;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.Test;
@@ -13,7 +15,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -22,7 +26,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import java.sql.Date;
 import java.util.List;
-
 
 @SpringBootTest
 @Transactional
@@ -44,10 +47,12 @@ class BjjnotetakerApplicationTests {
   @Autowired
   private AuthService authService;
 
+  @Autowired
+  private ObjectMapper objectMapper;
 
   @Test
-	void contextLoads() {
-	}
+  void contextLoads() {
+  }
 
   @Test
   void testThatRegisterUserWorks() {
@@ -117,11 +122,11 @@ class BjjnotetakerApplicationTests {
     userService.registerUser(user);
 
     Session session = Session.builder()
-        .classDate(new Date(Date.valueOf("2025-09-23").getTime()))
-        .classType("GI")
-        .duration(233)
-        .notes("Worked on leglocks")
-        .build();
+      .classDate(new Date(Date.valueOf("2025-09-23").getTime()))
+      .classType("GI")
+      .duration(233)
+      .notes("Worked on leglocks")
+      .build();
     sessionService.createSessionForUser("JUNITuser", session);
 
     assertNotNull(sessionService.getAllSessionsForUser("JUNITuser"));
@@ -284,19 +289,37 @@ class BjjnotetakerApplicationTests {
     assertTrue(authService.validateToken(token));
     assertEquals(registeredUser.getUsername(), authService.getUsernameFromToken(token));
     assertEquals(registeredUser.getId(), authService.getUserIdFromToken(token));
-  //  System.out.println(token);
+    //  System.out.println(token);
   }
 
+  @Test
+  void testAuthControllerRegisterWorks() throws Exception {
+    mockMvc.perform(post("/api/auth/register")
+      .contentType(MediaType.APPLICATION_JSON)
+      .content("""
+        {"username":"myame98", "email":"myEmail@gmail.com","password":"randomPassoword123","beltRank":"blue","stripeCount":0}
+        """))
+      .andExpect(status().isCreated());
+}
 
-//@Test
-//  void testAuthControllerRegisterWorks() throws Exception {
-//    mockMvc.perform(post("/register")
-//      .contentType(MediaType.APPLICATION_JSON)
-//      .content("""
-//        {"username":"myUsername98", "email":"myEmail@gmail.com","password":"randomPassoword123","beltRank":"blue","stripeCount":0}
-//        """))
-//      .andExpect(status().isCreated());
-//}
-//TO-DO FIX THIS ABOVE
+@Test
+  void testAuthControllerLoginWorks() throws Exception {
+  mockMvc.perform(post("/api/auth/register")
+    .contentType(MediaType.APPLICATION_JSON)
+    .content("""
+        {"username":"myame98", "email":"myEmail@gmail.com","password":"randomPassoword123","beltRank":"blue","stripeCount":0}
+        """)).andExpect(status().isCreated());
+
+  MvcResult mvcResult = mockMvc.perform(post("/api/auth/login")
+    .contentType(MediaType.APPLICATION_JSON)
+    .content("""
+        {"username":"myame98","password":"randomPassoword123"}
+        """)).andExpect(status().isOk()).andReturn();
+
+  String jwt = objectMapper.readValue(mvcResult.getResponse().getContentAsString(), LoginResponseDTO.class).getJwt();
+
+  assertTrue(authService.validateToken(jwt));
+}
 
 }
+
